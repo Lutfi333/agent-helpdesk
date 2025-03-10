@@ -1,0 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+a:not(.ps-menu-button) {
+  @apply text-primary hover:underline;
+}
