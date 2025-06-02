@@ -103,39 +103,40 @@ export default function TicketList() {
   };
 
   const renderStatus = useCallback((status: string) => {
-    let color = "";
+    let color: "default" | "primary" | "secondary" | "success" | "warning" | "danger" = "default";
+  
     switch (status) {
       case "open":
-        color = "bg-green-500";
+        color = "primary";      
         break;
       case "in_progress":
-        color = "bg-violet-500";
+        color = "secondary";   
         break;
       case "close":
-        color = "bg-blue-500";
+        color = "success";      
         break;
       case "resolve":
-        color = "bg-orange-400";
+        color = "warning";      
         break;
       case "cancel":
-        color = "bg-red-400";
+        color = "danger";       
         break;
       default:
-        color = "bg-blue-500";
+        color = "default";     
     }
+  
     return (
       <Chip
-        startContent={
-          <div className={`mr-1 h-2 w-2 rounded-full ${color}`}></div>
-        }
+        color={color}
         className="capitalize"
         size="sm"
-        variant="bordered"
+        variant="solid"
       >
         {status.replace("_", " ")}
       </Chip>
     );
   }, []);
+  
 
   const renderCell = useCallback(
     (row: ListTicketDatum, key: Key) => {

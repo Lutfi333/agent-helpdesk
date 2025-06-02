@@ -35,9 +35,9 @@ type Status = {
 
 const statusOptions: Status[] = [
   { id: "open", label: "Open", color: "bg-green-500" },
-  { id: "closed", label: "Closed", color: "bg-blue-500" },
   { id: "in_progress", label: "In Progress", color: "bg-violet-500" },
   { id: "resolve", label: "Resolve", color: "bg-orange-400" },
+  { id: "closed", label: "Closed", color: "bg-blue-500" },
 ];
 
 const ExportModal = (props: ExportModalProps) => {

@@ -51,9 +51,9 @@ function ModalFilter(props: ModalFilterProps) {
   const data: Status[] = useMemo(
     () => [
       { id: "open", name: "Open", selected: false },
-      { id: "closed", name: "Closed", selected: false },
       { id: "in_progress", name: "In Progress", selected: false },
       { id: "resolve", name: "Resolve", selected: false },
+      { id: "closed", name: "Closed", selected: false },
       { id: "cancel", name: "Cancel", selected: false },
     ],
     [],
@@ -141,54 +141,51 @@ function ModalFilter(props: ModalFilterProps) {
   };
 
   const renderStatus = (status: Status) => {
-    let color = "";
-    switch (status.id) {
-      case "open":
-        color = "bg-green-500";
-        break;
-      case "close":
-        color = "bg-blue-500";
-        break;
-      case "in_progress":
-        color = "bg-violet-500";
-        break;
-      case "resolve":
-        color = "bg-orange-400";
-        break;
-      case "cancel":
-        color = "bg-red-400";
-        break;
-      default:
-        color = "bg-blue-500";
-    }
+  let color: "default" | "primary" | "secondary" | "success" | "warning" | "danger" = "default";
 
-    return (
-      <Fragment key={status.id}>
-        <Chip
-          aria-label="status"
-          onClick={() => {
-            onAddSelectedStatus(status);
-          }}
-          startContent={
-            <div className={`mr-1 h-2 w-2 rounded-full ${color}`}></div>
-          }
-          endContent={
-            status.selected && (
-              <div className="ml-1 h-4 w-4 rounded-full bg-green-400 flex items-center justify-center">
-                <HiCheck className="h-3 w-3 text-white" />
-              </div>
-            )
-          }
-          className="capitalize cursor-pointer"
-          size="sm"
-          variant="bordered"
-          color={status.selected ? "primary" : "default"}
-        >
-          {status.name}
-        </Chip>
-      </Fragment>
-    );
-  };
+  switch (status.id) {
+    case "open":
+      color = "success";      
+      break;
+    case "in_progress":
+      color = "secondary";   
+      break;
+    case "resolve":
+      color = "warning";      
+      break;
+    case "close":
+      color = "primary";      
+      break;
+    case "cancel":
+      color = "danger";       
+      break;
+    default:
+      color = "default";      
+  }
+
+  return (
+    <Fragment key={status.id}>
+      <Chip
+        aria-label="status"
+        onClick={() => onAddSelectedStatus(status)}
+        endContent={
+          status.selected && (
+            <div className="ml-1 h-4 w-4 rounded-full bg-green-400 flex items-center justify-center">
+              <HiCheck className="h-3 w-3 text-white" />
+            </div>
+          )
+        }
+        className="capitalize cursor-pointer"
+        size="sm"
+        variant="solid"
+        color={color}
+      >
+        {status.name}
+      </Chip>
+    </Fragment>
+  );
+};
+
 
   return (
     <Modal

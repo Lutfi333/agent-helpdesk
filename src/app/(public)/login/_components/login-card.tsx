@@ -59,9 +59,9 @@ export default function LoginCard() {
         src="/assets/logo-landscape.png"
       />
     </div>
-    <Card className="w-full md:w-[420px] rounded-lg p-5 mb-8">
-      <CardHeader className="justify-center">
-        <p className="text-xl font-semibold">Login as Agent</p>
+    <Card className="w-full max-w-md sm:max-w-lg md:max-w-xl lg:max-w-2xl xl:max-w-3xl mx-auto rounded-2xl shadow-lg p-5">
+    <CardHeader className="justify-center">
+        <p className="text-xl font-semibold text-center">Login as Agent</p>
       </CardHeader>
       <CardBody>
         <form onSubmit={onSubmit} className="space-y-5">
