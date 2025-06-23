@@ -33,6 +33,7 @@ const COLUMNS = [
   { label: "Email", key: "email" },
   { label: "Role", key: "role" },
   { label: "Position", key: "position" },
+  { label: "Category", key: "category" },
   { label: "Last Activity", key: "lastActivity" },
   { label: "Action", key: "action" },
 ];
@@ -114,6 +115,8 @@ const UserTable: React.FC = () => {
           return <p className="capitalize">{item.role}</p>;
         case "position":
           return <>{item.jobTitle}</>;
+        case "category":
+          return <>{item.category.name}</>;
         case "lastActivity":
           return (
             <>

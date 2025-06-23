@@ -13,7 +13,8 @@ export interface UserList {
   profilePicture: ProfilePicture;
   jobTitle:       string;
   bio:            string;
-  role:            string;
+  role:           string;
+  category:       Company;
   isVerified:     boolean;
   lastActivityAt: null;
   createdAt:      Date;
