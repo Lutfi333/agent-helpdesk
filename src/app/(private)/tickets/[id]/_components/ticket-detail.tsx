@@ -28,7 +28,16 @@ import {
 } from "@heroui/react";
 import { DateTime } from "luxon";
 import { useRouter } from "next/navigation";
-import { ChangeEvent, Fragment, ReactNode, useMemo, useState } from "react";
+import {
+  ChangeEvent,
+  Fragment,
+  ReactNode,
+  useMemo,
+  useState,
+  useRef,
+  useEffect,
+  useCallback,
+} from "react";
 import { Controller, set, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { BiLock, BiStopwatch } from "react-icons/bi";
@@ -43,6 +52,13 @@ import PauseResume from "./pause-resume";
 import { useConfigMutation } from "@/services/setting";
 import { useCustomerDetailMutation } from "@/services/customer";
 import AlertCreditHourModal from "./alert-credit-hour-modal";
+import dynamic from "next/dynamic";
+
+// Perbaikan 1: Tambahkan loading state untuk emoji picker
+const EmojiPicker = dynamic(() => import("./emoji-picker"), {
+  ssr: false,
+  loading: () => <div className="p-2">Loading...</div>,
+});
 
 interface DetailProps {
   params: string;
@@ -75,6 +91,12 @@ export default function TicketDetail(props: DetailProps) {
   const [alertMessage, setAlertMessage] = useState<string>("");
   const [customerBalance, setCustomerBalance] = useState<number>(0);
 
+  // Perbaikan 2: State untuk mengontrol mounting emoji picker
+  const [isEmojiMounted, setIsEmojiMounted] = useState(false);
+  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+  const emojiRef = useRef<HTMLDivElement>(null);
+  const emojiWrapperRef = useRef<HTMLDivElement>(null);
+
   const [fileList, setFileList] = useState<FileList[]>([]);
   const [selectedAttachment, setSelectedAttachment] = useState<string>("");
   const [commentText, setCommentText] = useState<ListCommentData[]>([]);
@@ -99,11 +121,73 @@ export default function TicketDetail(props: DetailProps) {
     name: "",
     type: "",
   });
-  const { control, handleSubmit, setValue, setError } = useForm<{
+  const { control, handleSubmit, setValue, setError, getValues } = useForm<{
     comment: string;
   }>({
     mode: "all",
   });
+
+  const addEmoji = useCallback(
+    (emoji: any) => {
+      const symbol = emoji.native || emoji.colons || emoji.id || "";
+      if (!symbol) return;
+
+      const current = getValues("comment") || "";
+      setValue("comment", current + symbol, { shouldValidate: true });
+      // Tutup emoji picker setelah memilih
+      setShowEmojiPicker(false);
+    },
+    [getValues, setValue],
+  );
+
+  const renderMessage = (message: string) => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+    return message.split(urlRegex).map((part, index) => {
+      if (urlRegex.test(part)) {
+        return (
+          <a
+            key={index}
+            href={part}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="!text-blue-600 underline hover:!text-blue-800"
+          >
+            {part}
+          </a>
+        );
+      }
+      return <span key={index}>{part}</span>;
+    });
+  };
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        emojiWrapperRef.current &&
+        !emojiWrapperRef.current.contains(event.target as Node)
+      ) {
+        setShowEmojiPicker(false);
+        setIsEmojiMounted(false);
+      }
+    };
+
+    if (showEmojiPicker) {
+      // Delay sedikit untuk memastikan component sudah di-mount
+      const timer = setTimeout(() => {
+        setIsEmojiMounted(true);
+        document.addEventListener("mousedown", handleClickOutside);
+      }, 100);
+
+      return () => {
+        clearTimeout(timer);
+        document.removeEventListener("mousedown", handleClickOutside);
+      };
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showEmojiPicker]);
 
   useEffect(() => {
     setCommentText([]);
@@ -426,36 +510,38 @@ export default function TicketDetail(props: DetailProps) {
     }
     return "Just now";
   };
-const renderStatus = useCallback((status: string) => {
-    let color: "default" | "primary" | "secondary" | "success" | "warning" | "danger" = "default";
-  
+
+  const renderStatus = useCallback((status: string) => {
+    let color:
+      | "default"
+      | "primary"
+      | "secondary"
+      | "success"
+      | "warning"
+      | "danger" = "default";
+
     switch (status) {
       case "open":
-        color = "primary";      
+        color = "primary";
         break;
       case "in_progress":
-        color = "secondary";   
+        color = "secondary";
         break;
       case "close":
-        color = "success";      
+        color = "success";
         break;
       case "resolve":
-        color = "warning";      
+        color = "warning";
         break;
       case "cancel":
-        color = "danger";       
+        color = "danger";
         break;
       default:
-        color = "default";     
+        color = "default";
     }
-  
+
     return (
-      <Chip
-        color={color}
-        className="capitalize"
-        size="sm"
-        variant="solid"
-      >
+      <Chip color={color} className="capitalize" size="sm" variant="solid">
         {status.replace("_", " ")}
       </Chip>
     );
@@ -529,6 +615,12 @@ const renderStatus = useCallback((status: string) => {
     [time, detail?.data.logTime.durationInSeconds, isTracking],
   );
 
+  const toggleEmojiPicker = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setShowEmojiPicker((prev) => !prev);
+  }, []);
+
   if (isLoading) {
     return (
       <div className="w-full mx-auto mt-10 flex space-x-2">
@@ -539,30 +631,36 @@ const renderStatus = useCallback((status: string) => {
   }
 
   const renderStatusSelection = (status: Status) => {
-    let color: "default" | "primary" | "secondary" | "success" | "warning" | "danger" = "default";
+    let color:
+      | "default"
+      | "primary"
+      | "secondary"
+      | "success"
+      | "warning"
+      | "danger" = "default";
     switch (status.id) {
       case "open":
-        color = "primary";      
+        color = "primary";
         break;
       case "in_progress":
-        color = "secondary";   
+        color = "secondary";
         break;
       case "close":
-        color = "success";      
+        color = "success";
         break;
       case "resolve":
-        color = "warning";      
+        color = "warning";
         break;
       case "cancel":
-        color = "danger";       
+        color = "danger";
         break;
       default:
-        color = "default"; 
+        color = "default";
     }
     return (
       <Fragment key={status.id}>
         <Chip
-        color={color}
+          color={color}
           onClick={() => {
             if (status.id == selectedStatus) {
               setSelectedStatus("");
@@ -593,8 +691,6 @@ const renderStatus = useCallback((status: string) => {
       </Fragment>
     );
   };
-
-  
 
   return (
     <>
@@ -659,7 +755,7 @@ const renderStatus = useCallback((status: string) => {
               {comment?.data.list.length == 0 ? (
                 <div className="flex-1 flex flex-col justify-center items-center text-white">
                   <p className="font-semibold">
-                    You’re starting a new conversation
+                    You are starting a new conversation
                   </p>
                   <p>Type your first message below.</p>
                 </div>
@@ -677,7 +773,7 @@ const renderStatus = useCallback((status: string) => {
                               .toFormat("dd LLL yyyy, HH:mm")}
                           </div>
                           <div className="max-w-[80%] bg-primary border border-gray-500 p-2 rounded-lg">
-                            <div>{item.content}</div>
+                            <div>{renderMessage(item.content)}</div>
                             {item.attachments.length > 0 && (
                               <>
                                 <Divider />
@@ -720,7 +816,7 @@ const renderStatus = useCallback((status: string) => {
                               .toFormat("dd LLL yyyy, HH:mm")}
                           </div>
                           <div className="max-w-[80%] bg-white border border-gray-500 p-2 rounded-lg">
-                            <div>{item.content}</div>
+                            <div>{renderMessage(item.content)}</div>
                             {item.attachments.length > 0 && (
                               <>
                                 <Divider />
@@ -768,56 +864,78 @@ const renderStatus = useCallback((status: string) => {
                   ref={fileInputRef}
                   onChange={handleFileChange}
                 />
-                <form onSubmit={onSubmit}>
-                  <Controller
-                    name="comment"
-                    rules={{
-                      required: {
-                        value: true,
-                        message: "Comment cannot be empty",
-                      },
-                    }}
-                    control={control}
-                    render={({ field, fieldState: { invalid, error } }) => (
-                      <Textarea
-                        placeholder="Type your message here..."
-                        errorMessage={error?.message}
-                        isInvalid={invalid}
-                        {...field}
-                        endContent={
-                          <div className="flex items-end h-full bottom-0 space-x-2">
-                            <Button
-                              aria-label="attachment"
-                              isIconOnly
-                              variant="bordered"
-                              onClick={(event) => {
-                                event.stopPropagation();
-                                fileInputRef.current?.click();
-                              }}
-                              className="cursor-pointer border-primary"
-                            >
-                              <RiAttachment2
-                                size={20}
-                                className="text-primary"
-                              />
-                            </Button>
-                            <Button
-                              aria-label="send"
-                              isIconOnly
-                              type="submit"
-                              className="cursor-pointer bg-primary"
-                            >
-                              <RiSendPlane2Line
-                                size={20}
-                                className="text-white"
-                              />
-                            </Button>
-                          </div>
-                        }
-                      />
-                    )}
-                  />
-                </form>
+                <div ref={emojiWrapperRef} className="relative">
+                  <form onSubmit={onSubmit}>
+                    <Controller
+                      name="comment"
+                      rules={{
+                        required: {
+                          value: true,
+                          message: "Comment cannot be empty",
+                        },
+                      }}
+                      control={control}
+                      render={({ field, fieldState: { invalid, error } }) => (
+                        <div className="relative">
+                          <Textarea
+                            placeholder="Type your message here..."
+                            errorMessage={error?.message}
+                            isInvalid={invalid}
+                            {...field}
+                            endContent={
+                              <>
+                                <div className="flex items-end h-full bottom-0 justify-end space-x-2">
+                                  <Button
+                                    isIconOnly
+                                    variant="bordered"
+                                    onClick={toggleEmojiPicker}
+                                    className="cursor-pointer border-primary"
+                                  >
+                                    😊
+                                  </Button>
+
+                                  {showEmojiPicker && isEmojiMounted && (
+                                    <div className="absolute bottom-16 right-0 z-50 bg-white rounded-lg shadow-lg border">
+                                      <EmojiPicker onEmojiSelect={addEmoji} />
+                                    </div>
+                                  )}
+
+                                  <Button
+                                    aria-label="attachment"
+                                    isIconOnly
+                                    variant="bordered"
+                                    onClick={(event) => {
+                                      event.stopPropagation();
+                                      fileInputRef.current?.click();
+                                    }}
+                                    className="cursor-pointer border-primary"
+                                  >
+                                    <RiAttachment2
+                                      size={20}
+                                      className="text-primary"
+                                    />
+                                  </Button>
+
+                                  <Button
+                                    aria-label="send"
+                                    isIconOnly
+                                    type="submit"
+                                    className="cursor-pointer bg-primary"
+                                  >
+                                    <RiSendPlane2Line
+                                      size={20}
+                                      className="text-white"
+                                    />
+                                  </Button>
+                                </div>
+                              </>
+                            }
+                          />
+                        </div>
+                      )}
+                    />
+                  </form>
+                </div>
 
                 <div className="flex flex-wrap justify-center bg-red gap-2">
                   {data?.map((status) => renderStatusSelection(status))}

@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: "standalone",
+  // output: "standalone",
   webpack: (config) => {
     /** @type {import('webpack').Configuration} */
     const c = config;
@@ -32,7 +32,7 @@ const nextConfig = {
         },
         dts: "./auto-imports.d.ts",
         include: [/\.ts$/, /\.tsx$/],
-      })
+      }),
     );
 
     return c;
