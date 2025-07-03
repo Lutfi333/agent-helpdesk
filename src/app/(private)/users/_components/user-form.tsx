@@ -140,16 +140,21 @@ const UserForm: React.FC<UserFormProps> = ({
               variant="bordered"
               isInvalid={invalid}
               errorMessage={error?.message}
-              {...field}
+              selectedKeys={field.value ? [field.value] : []}
+              onSelectionChange={(keys) => {
+                const selected = Array.from(keys)[0];
+                field.onChange(selected);
+              }}
             >
               {category?.data?.list?.map((categoryData: CategoryList) => (
                 <SelectItem value={categoryData.id} key={categoryData.id}>
                   {categoryData.name}
                 </SelectItem>
-              )) || []}
+              )) ?? []}
             </Select>
           )}
         />
+
         <p className="text-sm">Role</p>
         <Controller
           control={control}

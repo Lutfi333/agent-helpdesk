@@ -34,6 +34,7 @@ const COLUMNS = [
   { label: "Role", key: "role" },
   { label: "Position", key: "position" },
   { label: "Category", key: "category" },
+  { label: "Ticket Completed", key: "totalTicket" },
   { label: "Last Activity", key: "lastActivity" },
   { label: "Action", key: "action" },
 ];
@@ -117,6 +118,8 @@ const UserTable: React.FC = () => {
           return <>{item.jobTitle}</>;
         case "category":
           return <>{item.category.name}</>;
+        case "totalTicket":
+          return <>{item.totalTicketCompleted}</>;
         case "lastActivity":
           return (
             <>

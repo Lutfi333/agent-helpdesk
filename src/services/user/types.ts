@@ -15,6 +15,7 @@ export interface UserList {
   bio:            string;
   role:           string;
   category:       Company;
+  totalTicketCompleted: number;
   isVerified:     boolean;
   lastActivityAt: null;
   createdAt:      Date;
