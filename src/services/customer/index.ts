@@ -58,6 +58,37 @@ export const useCustomerDetailMutation = <Res = ResponseDetailCustomerUser>(
     httpOptions: config?.axios,
   });
 
+  
+export const useCreateCustomerUser = <Res = R<any>>(
+  config?: ServiceMutationConfig<Res>,
+) =>
+  useHttpMutation<Res, Err>(API.CUSTOMER.CREATE_CUSTOMER_USER, {
+    method: "POST",
+    httpOptions: config?.axios,
+    queryOptions: config?.query,
+  });
+
+export const useUpdateCustomerUser = <Res = R<any>>(
+  id: string,
+  config?: ServiceMutationConfig<Res>,
+) =>
+  useHttpMutation<Res, Err>(API.CUSTOMER.UPDATE_CUSTOMER_USER(id), {
+    method: "PUT",
+    httpOptions: config?.axios,
+    queryOptions: config?.query,
+  });
+
+
+export const useDeleteCustomerUser = <Res = R<any>>(
+  id?: string,
+  config?: ServiceMutationConfig<Res>,
+) =>
+  useHttpMutation<Res, Err>(API.CUSTOMER.DELETE_CUSTOMER_USER(id ?? ""), {
+    method: "DELETE",
+    httpOptions: config?.axios,
+    queryOptions: config?.query,
+    });
+
 export const useUploadLogo = <Res = ResponseUploadLogo>(
   config?: ServiceMutationConfig<Res>,
 ) =>

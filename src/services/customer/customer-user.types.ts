@@ -24,6 +24,7 @@ export interface CustomerUserList {
   jobTitle:       string;
   bio:            string;
   role:           string;
+  ticketTotal:    number;
   isVerified:     boolean;
   lastActivityAt: Date | null;
   createdAt:      Date;

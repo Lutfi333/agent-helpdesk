@@ -4,6 +4,9 @@ import {
   useCustomerDetail,
   useUpdateCustomer,
   useUploadLogo,
+  useCreateCustomerUser,
+  useUpdateCustomerUser,
+  useCustomerUserDetail,
 } from "@/services/customer";
 import { CustomerCreatePayload } from "@/services/customer/customer.types";
 import { Button, Input } from "@heroui/react";
@@ -24,9 +27,7 @@ interface CustomerFormProps {
 interface CustomerData {
   name: string;
   email: string;
-  logoAttachId: string;
   companyId: string;
-  code: string;
 }
 
 const CustomerForm: React.FC<CustomerFormProps> = ({ isEdit, id }) => {
@@ -42,27 +43,22 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ isEdit, id }) => {
   const { control, handleSubmit, setValue } = useForm<CustomerCreatePayload>({
     mode: "all",
   });
-  const { data: detail, isLoading } = useCustomerDetail(id ?? "");
+  const { data: detail, isLoading } = useCustomerUserDetail(id ?? "");
 
   useEffect(() => {
     if (detail && id) {
       setValue("name", detail.data.name);
-      setValue("code", detail.data.code);
-      setValue("logoAttachId", detail.data.logo.name);
-      setLogo({ id: detail.data.logo.id, name: detail.data.logo.name });
     }
   }, [detail, setValue, id]);
 
-  const { mutate: createCustomer } = useCreateCustomer();
-  const { mutate: updateCustomer } = useUpdateCustomer(id || "");
+  const { mutate: createCustomer } = useCreateCustomerUser();
+  const { mutate: updateCustomer } = useUpdateCustomerUser(id || "");
 
   const onSubmit = handleSubmit((data) => {
     if (isEdit) {
       updateCustomer(
         {
           name: data.name,
-          logoAttachId: logo.id,
-          code: data.code,
         },
         {
           onSuccess: (data) => {
@@ -79,8 +75,6 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ isEdit, id }) => {
         {
           name: data.name,
           email: data.email,
-          logoAttachId: logo.id,
-          code: data.code,
         },
         {
           onSuccess: () => {
@@ -97,27 +91,27 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ isEdit, id }) => {
 
   const { mutate: uploadLogo } = useUploadLogo();
 
-  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      const formData = new FormData();
-      formData.append("file", e.target.files[0]);
-      formData.append(
-        "title",
-        `Attachment-${DateTime.now().toMillis().toString()}`,
-      );
-      uploadLogo(formData, {
-        onSuccess: (data) => {
-          toast.success("Logo uploaded successfully");
-          setLogo({
-            id: data.data.id,
-            name: data.data.name,
-          });
-          setValue("logoAttachId", data.data.name);
-        },
-        onError: () => {},
-      });
-    }
-  };
+  // const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+  //   if (e.target.files) {
+  //     const formData = new FormData();
+  //     formData.append("file", e.target.files[0]);
+  //     formData.append(
+  //       "title",
+  //       `Attachment-${DateTime.now().toMillis().toString()}`,
+  //     );
+  //     uploadLogo(formData, {
+  //       onSuccess: (data) => {
+  //         toast.success("Logo uploaded successfully");
+  //         setLogo({
+  //           id: data.data.id,
+  //           name: data.data.name,
+  //         });
+  //         setValue("logoAttachId", data.data.name);
+  //       },
+  //       onError: () => {},
+  //     });
+  //   }
+  // };
 
   return (
     <form onSubmit={onSubmit} className="max-w-2xl">
@@ -173,71 +167,6 @@ const CustomerForm: React.FC<CustomerFormProps> = ({ isEdit, id }) => {
             )}
           />
         )}
-        <Controller
-          name="code"
-          control={control}
-          rules={{
-            required: {
-              value: true,
-              message: "code is required",
-            },
-            pattern: {
-              value: /^[a-zA-Z0-9]+$/,
-              message: "Invalid code",
-            },
-            maxLength: {
-              value: 5,
-              message: "Code must be 5 characters long",
-            },
-          }}
-          render={({ field, fieldState: { invalid, error } }) => (
-            <Input
-              id="code"
-              label="Customer Code"
-              labelPlacement="outside"
-              variant="bordered"
-              placeholder="Customer Code"
-              isInvalid={invalid}
-              errorMessage={error?.message}
-              {...field}
-            />
-          )}
-        />
-        <input
-          accept="image/*, application/pdf, video/*"
-          type="file"
-          multiple
-          className="hidden"
-          ref={fileInputRef}
-          onChange={handleFileChange}
-        />
-        <Controller
-          name="logoAttachId"
-          rules={{
-            required: {
-              value: true,
-              message: "File is required",
-            },
-          }}
-          control={control}
-          render={({ field, fieldState: { invalid, error } }) => (
-            <Input
-              id="logoAttachId"
-              label="Customer Logo"
-              labelPlacement="outside"
-              className="cursor-pointer hover:cursor-pointer"
-              placeholder="Select Image"
-              variant="bordered"
-              onClick={() => fileInputRef.current?.click()}
-              isInvalid={invalid}
-              errorMessage={error?.message}
-              endContent={
-                <IoMdCloudUpload className="text-2xl cursor-pointer text-slate-500" />
-              }
-              {...field}
-            />
-          )}
-        />
       </div>
       <div className="flex gap-4 mt-4">
         <Button variant="bordered" onPress={() => router.push("/customers")}>

@@ -11,9 +11,10 @@ import {
 import { RiMore2Fill } from "react-icons/ri";
 import Cookie from "js-cookie";
 import { USER } from "@/constants/auth";
+import { CustomerUserList } from "@/services/customer/customer-user.types";
 
 interface CardCustomerProps {
-  data?: ListCustomerData;
+  data?: CustomerUserList;
   isShowAction?: boolean;
   isDetail?: boolean;
   onDetail?: () => void;
@@ -105,17 +106,17 @@ const CardCustomer: React.FC<CardCustomerProps> = ({
       )}
 
       <div className="flex gap-6 items-center">
-        <div>
+        {/* <div>
           {!isFetching && (
             <Image
               width={100}
               height={100}
-              src={data && data?.logo.url}
+              src={data && data?.profilePicture.url}
               alt="Profile"
               className="h-16 rounded-md object-cover"
             />
           )}
-        </div>
+        </div> */}
         <div className="flex flex-col gap-2">
           <div>
             <h6 className="font-semibold text-sm">Total Ticket Submited</h6>

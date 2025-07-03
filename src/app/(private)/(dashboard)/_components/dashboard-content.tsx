@@ -5,7 +5,7 @@ import dynamic from "next/dynamic";
 import { DateTime } from "luxon";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
 import CardCustomer from "@/components/CardCustomer";
-import { useCustomerList } from "@/services/customer";
+import { useCustomerList, useCustomerUserList } from "@/services/customer";
 import { useDashboardChart } from "@/services/dashboard";
 import PaginationComponent from "@/app/_components/pagination";
 import { useAuthMe } from "@/services/auth";
@@ -48,7 +48,7 @@ export default function DashboardContent() {
     data: customer,
     isFetching,
     refetch,
-  } = useCustomerList(paginationParams);
+  } = useCustomerUserList(paginationParams);
 
   const [chartState, setChartState] = useState<ChartData>({
     options: {
