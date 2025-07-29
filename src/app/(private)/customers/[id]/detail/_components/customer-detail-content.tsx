@@ -23,7 +23,7 @@ export default function CustomerDetailContent(props: Props) {
 
   const user = useMemo(() => data?.data, [data]);
 
-  const { data: detail, isLoading } = useCustomerDetail(id);
+  const { data: detail, isLoading } = useCustomerUserDetail(id);
   const { data: customerDetail, isLoading: isCustomerDetailLoading } =
     useCustomerUserDetail(id);
 
@@ -34,11 +34,19 @@ export default function CustomerDetailContent(props: Props) {
           isIconOnly
           radius="full"
           variant="light"
-          onPress={() => user?.company.type == "B2C" ? router.push("/customer-user") : router.push("/customers")}
+          onPress={() =>
+            user?.company.type == "B2C"
+              ? router.push("/customer-user")
+              : router.push("/customers")
+          }
         >
           <RiArrowLeftLine size={20} />
         </Button>
-        <h1 className="font-semibold text-xl">{user?.company.type == "B2C" ? customerDetail?.data.name : detail?.data.name}</h1>
+        <h1 className="font-semibold text-xl">
+          {user?.company.type == "B2C"
+            ? customerDetail?.data.name
+            : detail?.data.name}
+        </h1>
       </div>
 
       <div className="grid md:grid-cols-2 items-center gap-4 mb-4">

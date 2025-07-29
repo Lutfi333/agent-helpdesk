@@ -27,12 +27,15 @@ import toast from "react-hot-toast";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import PaginationComponent from "@/app/_components/pagination";
 import { useAuthMe } from "@/services/auth";
+import TicketList from "../../tickets/_components/ticket-list";
 
 const COLUMNS = [
   { label: "Name", key: "name" },
   { label: "Email", key: "email" },
   { label: "Role", key: "role" },
   { label: "Position", key: "position" },
+  { label: "Category", key: "category" },
+  { label: "Ticket Completed", key: "totalTicket" },
   { label: "Last Activity", key: "lastActivity" },
   { label: "Action", key: "action" },
 ];
@@ -114,6 +117,10 @@ const UserTable: React.FC = () => {
           return <p className="capitalize">{item.role}</p>;
         case "position":
           return <>{item.jobTitle}</>;
+        case "category":
+          return <>{item.category.name}</>;
+        case "totalTicket":
+          return <>{item.totalTicketCompleted}</>;
         case "lastActivity":
           return (
             <>
@@ -139,6 +146,18 @@ const UserTable: React.FC = () => {
                 >
                   Edit
                 </DropdownItem>
+                <>
+                  {item.id !== userMe?.id && (
+                    <DropdownItem
+                      key={"detail"}
+                      onPress={() => {
+                        router.push(`/users/${item.id}/detail`);
+                      }}
+                    >
+                      Detail
+                    </DropdownItem>
+                  )}
+                </>
                 <>
                   {item.id !== userMe?.id && (
                     <DropdownItem

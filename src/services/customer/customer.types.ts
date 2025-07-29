@@ -5,8 +5,7 @@ export type ResponseDetailCustomer = R<ListCustomerData>;
 export interface CustomerCreatePayload {
   name: string;
   email: string;
-  logoAttachId: string;
-  code: string;
+  logoAttachId?: string;
 }
 
 export type Logo = {

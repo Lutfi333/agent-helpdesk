@@ -127,7 +127,7 @@ export default function LeftSidebar() {
               active={activeMenu("/users")}
               icon={<LuUserCog />}
             >
-              User Management
+              Agent User Management
             </MenuItem>
             {user?.company.type !== "B2C" && (
               <MenuItem

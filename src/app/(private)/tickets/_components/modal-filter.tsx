@@ -14,7 +14,7 @@ import {
 } from "@heroui/react";
 import { Fragment } from "react";
 import { HiCheck } from "react-icons/hi";
-import { useCustomerList } from "@/services/customer";
+import { useCustomerUserList } from "@/services/customer";
 
 interface ModalFilterProps {
   isCustomer?: boolean;
@@ -63,7 +63,7 @@ function ModalFilter(props: ModalFilterProps) {
     data: customer,
     isFetching,
     refetch,
-  } = useCustomerList({
+  } = useCustomerUserList({
     page: 1,
     limit: 100,
     sort: "createdAt",
@@ -141,51 +141,56 @@ function ModalFilter(props: ModalFilterProps) {
   };
 
   const renderStatus = (status: Status) => {
-  let color: "default" | "primary" | "secondary" | "success" | "warning" | "danger" = "default";
+    let color:
+      | "default"
+      | "primary"
+      | "secondary"
+      | "success"
+      | "warning"
+      | "danger" = "default";
 
-  switch (status.id) {
-    case "open":
-      color = "success";      
-      break;
-    case "in_progress":
-      color = "secondary";   
-      break;
-    case "resolve":
-      color = "warning";      
-      break;
-    case "close":
-      color = "primary";      
-      break;
-    case "cancel":
-      color = "danger";       
-      break;
-    default:
-      color = "default";      
-  }
+    switch (status.id) {
+      case "open":
+        color = "success";
+        break;
+      case "in_progress":
+        color = "secondary";
+        break;
+      case "resolve":
+        color = "warning";
+        break;
+      case "close":
+        color = "primary";
+        break;
+      case "cancel":
+        color = "danger";
+        break;
+      default:
+        color = "default";
+    }
 
-  return (
-    <Fragment key={status.id}>
-      <Chip
-        aria-label="status"
-        onClick={() => onAddSelectedStatus(status)}
-        endContent={
-          status.selected && (
-            <div className="ml-1 h-4 w-4 rounded-full bg-green-400 flex items-center justify-center">
-              <HiCheck className="h-3 w-3 text-white" />
-            </div>
-          )
-        }
-        className="capitalize cursor-pointer"
-        size="sm"
-        variant="solid"
-        color={color}
-      >
-        {status.name}
-      </Chip>
-    </Fragment>
-  );
-};
-
+    return (
+      <Fragment key={status.id}>
+        <Chip
+          aria-label="status"
+          onClick={() => onAddSelectedStatus(status)}
+          endContent={
+            status.selected && (
+              <div className="ml-1 h-4 w-4 rounded-full bg-green-400 flex items-center justify-center">
+                <HiCheck className="h-3 w-3 text-white" />
+              </div>
+            )
+          }
+          className="capitalize cursor-pointer"
+          size="sm"
+          variant="solid"
+          color={color}
+        >
+          {status.name}
+        </Chip>
+      </Fragment>
+    );
+  };
 
   return (
     <Modal

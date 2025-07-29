@@ -25,7 +25,11 @@ import ModalFilter from "./modal-filter";
 import PaginationComponent from "@/app/_components/pagination";
 import { useAuthMe } from "@/services/auth";
 
-export default function TicketList() {
+interface Props {
+  userID?: string;
+}
+
+export default function TicketList({ userID }: Props) {
   const router = useRouter();
   const path = usePathname();
   const qs = useSearchParams();
@@ -81,8 +85,9 @@ export default function TicketList() {
       subject: qs.get("subject") || "",
       code: qs.get("id") || "",
       companyProductID: qs.get("companyProductID") || "",
+      completedBy: userID || "",
     };
-  }, [qs]);
+  }, [qs, userID]);
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -103,40 +108,40 @@ export default function TicketList() {
   };
 
   const renderStatus = useCallback((status: string) => {
-    let color: "default" | "primary" | "secondary" | "success" | "warning" | "danger" = "default";
-  
+    let color:
+      | "default"
+      | "primary"
+      | "secondary"
+      | "success"
+      | "warning"
+      | "danger" = "default";
+
     switch (status) {
       case "open":
-        color = "primary";      
+        color = "primary";
         break;
       case "in_progress":
-        color = "secondary";   
+        color = "secondary";
         break;
       case "close":
-        color = "success";      
+        color = "success";
         break;
       case "resolve":
-        color = "warning";      
+        color = "warning";
         break;
       case "cancel":
-        color = "danger";       
+        color = "danger";
         break;
       default:
-        color = "default";     
+        color = "default";
     }
-  
+
     return (
-      <Chip
-        color={color}
-        className="capitalize"
-        size="sm"
-        variant="solid"
-      >
+      <Chip color={color} className="capitalize" size="sm" variant="solid">
         {status.replace("_", " ")}
       </Chip>
     );
   }, []);
-  
 
   const renderCell = useCallback(
     (row: ListTicketDatum, key: Key) => {
@@ -153,7 +158,7 @@ export default function TicketList() {
                 className="flex-none"
                 src={row.customer.}
               /> */}
-              <span className="text-sm font-semibold">{row.product.name}</span>
+              <span className="text-sm font-semibold">{row.customer.name}</span>
             </div>
           );
         case "category":

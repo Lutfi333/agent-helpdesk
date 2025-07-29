@@ -41,6 +41,7 @@ export default function SettingContent() {
   const [isEditDomain, setEditDomain] = useState(false);
   const [isCustom, setIsCustom] = useState(false);
   const [valueBio, setValueBio] = useState("");
+  const [valueContact, setValueContact] = useState("");
   const [valueName, setValueName] = useState("");
   const [valueDomain, setValueDomain] = useState("");
   const [visibleOld, setVisibleOld] = useState(false);
@@ -89,6 +90,7 @@ export default function SettingContent() {
     if (data?.data) {
       setValueBio(data?.data?.bio);
       setValueName(data?.data?.name);
+      setValueContact(data?.data?.contact);
       setAttachment({
         id: data?.data?.profilePicture.id,
         name: data?.data?.profilePicture.name,
@@ -116,12 +118,14 @@ export default function SettingContent() {
       {
         bio: valueBio,
         name: data.name,
+        contact: valueContact,
         attachId: attachment?.id,
       },
       {
         onSuccess: () => {
           toast.success("Success to update profile");
           setValueBio("");
+          setValueContact("");
           setValueName("");
           setEditProfile(false);
           refetch();
@@ -237,6 +241,7 @@ export default function SettingContent() {
                 onPress={() => {
                   setValueBio(data?.data?.bio ?? "");
                   setValueProfile("name", data?.data?.name ?? "");
+                  setValueContact(data?.data?.contact ?? "");
                   setValueProfile(
                     "attachment",
                     data?.data?.profilePicture.name ?? "",
@@ -251,6 +256,12 @@ export default function SettingContent() {
             <p className="text-slate-400 mt-5">Bio</p>
             <div className="max-w-2/4 border border-gray-500 rounded-md p-3">
               <p>{data?.data?.bio != "" ? data?.data?.bio : "No Bio Yet"}</p>
+            </div>
+            <p className="text-slate-400 mt-5">Contact</p>
+            <div className="max-w-2/4 border border-gray-500 rounded-md p-3">
+              <p>
+                {data?.data?.bio != "" ? data?.data?.contact : "No Bio Yet"}
+              </p>
             </div>
           </>
         </CardBody>
@@ -489,6 +500,8 @@ export default function SettingContent() {
         inputFileRef={inputFileRef}
         valueBio={valueBio}
         setValueBio={setValueBio}
+        valueContact={valueContact}
+        setValueContact={setValueContact}
         selectedAvatar={attachment || null}
       />
     </div>

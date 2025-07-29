@@ -1,6 +1,15 @@
-import { Button, Input, Radio, RadioGroup } from "@heroui/react";
+import {
+  Button,
+  Input,
+  Radio,
+  RadioGroup,
+  Select,
+  SelectItem,
+} from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { Controller, useForm } from "react-hook-form";
+import { useCategory } from "@/services/category";
+import { CategoryList } from "@/services/category/types";
 
 interface UserFormProps {
   isEdit?: boolean;
@@ -10,6 +19,7 @@ interface UserFormProps {
     role: string;
     email: string;
     jobTitle: string;
+    categoryId: string;
   }) => void;
 }
 
@@ -18,6 +28,7 @@ interface UserFormValue {
   role: string;
   email: string;
   jobTitle: string;
+  categoryId: string;
 }
 
 const UserForm: React.FC<UserFormProps> = ({
@@ -30,6 +41,13 @@ const UserForm: React.FC<UserFormProps> = ({
   });
   const router = useRouter();
 
+  const { data: category } = useCategory({
+    page: 1,
+    limit: 100,
+    sort: "name",
+    dir: "asc",
+  });
+
   const onSubmit = (value: UserFormValue) => {
     onCallback && onCallback(value);
   };
@@ -41,6 +59,9 @@ const UserForm: React.FC<UserFormProps> = ({
       setValue("role", defaultValue.role);
       setValue("email", defaultValue.email);
       setValue("jobTitle", defaultValue.jobTitle);
+      if (defaultValue?.category?.id) {
+        setValue("categoryId", defaultValue.category.id);
+      }
     }
   }, [defaultValue, setValue]);
 
@@ -105,6 +126,35 @@ const UserForm: React.FC<UserFormProps> = ({
             />
           )}
         />
+        <Controller
+          name="categoryId"
+          control={control}
+          rules={{ required: { value: true, message: "Category is required" } }}
+          render={({ field, fieldState: { invalid, error } }) => (
+            <Select
+              label="Category"
+              labelPlacement="outside"
+              placeholder="Select Category"
+              size="lg"
+              radius="md"
+              variant="bordered"
+              isInvalid={invalid}
+              errorMessage={error?.message}
+              selectedKeys={field.value ? [field.value] : []}
+              onSelectionChange={(keys) => {
+                const selected = Array.from(keys)[0];
+                field.onChange(selected);
+              }}
+            >
+              {category?.data?.list?.map((categoryData: CategoryList) => (
+                <SelectItem value={categoryData.id} key={categoryData.id}>
+                  {categoryData.name}
+                </SelectItem>
+              )) ?? []}
+            </Select>
+          )}
+        />
+
         <p className="text-sm">Role</p>
         <Controller
           control={control}

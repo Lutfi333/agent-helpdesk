@@ -15,6 +15,7 @@ export interface AuthUser {
   profilePicture: ProfilePicture;
   bio: string;
   role: string;
+  contact: string;
   lastActivityAt: Date;
   passwordResetToken: string;
   createdAt: Date;

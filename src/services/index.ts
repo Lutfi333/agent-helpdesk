@@ -83,6 +83,9 @@ export const API = {
     //CUSTOMER USER is customer user
     LIST_CUSTOMER_USER: `/agent/customer/list`,
     DETAIL_CUSTOMER_USER: (id: string) => `/agent/customer/detail/${id}`,
+    CREATE_CUSTOMER_USER: `/agent/customer/create`,
+    UPDATE_CUSTOMER_USER: (id: string) => `/agent/customer/update/${id}`,
+    DELETE_CUSTOMER_USER: (id: string) => `/agent/customer/delete/${id}`,
   },
   USER: {
     LIST: "/agent/user/list",
