@@ -712,8 +712,8 @@ export default function TicketDetail(props: DetailProps) {
           <Card shadow="sm">
             <CardHeader className="justify-between">
               <div className="flex gap-2 items-center">
-                <Avatar isBordered src={detail?.data.product.image} />
-                <div>{detail?.data.product.name}</div>
+                {/* <Avatar isBordered src={detail?.data.product.image} /> */}
+                <div>{detail?.data.customer.name}</div>
               </div>
             </CardHeader>
             <Divider />

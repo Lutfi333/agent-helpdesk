@@ -31,7 +31,7 @@ const UserContent: React.FC = () => {
     <>
       <div className="flex md:justify-between gap-4 items-end mb-4">
         <div>
-          <h1 className="font-semibold text-xl mb-1">User Management</h1>
+          <h1 className="font-semibold text-xl mb-1">Agent User Management</h1>
           <p className="text-sm text-gray-500">
             Manage user who can acces the desk ticketing
           </p>

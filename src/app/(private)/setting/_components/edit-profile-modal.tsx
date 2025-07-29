@@ -19,6 +19,8 @@ interface EditProfileModalProps {
   inputFileRef: any;
   valueBio: string;
   setValueBio: any;
+  valueContact: string;
+  setValueContact: any;
   open: boolean;
   setOpen: any;
   selectedAvatar?: {
@@ -94,11 +96,19 @@ export default function EditProfileModal(props: EditProfileModalProps) {
                   />
                 )}
               />
+              <p className="font-bold">Bio</p>
               <Textarea
                 type="text"
                 variant="bordered"
                 value={props.valueBio}
                 onChange={(e) => props.setValueBio(e.target.value)}
+              />
+              <p className="font-bold">Contact</p>
+              <Input
+                type="text"
+                variant="bordered"
+                value={props.valueContact}
+                onChange={(e) => props.setValueContact(e.target.value)}
               />
               <div className="flex gap-3">
                 <Button

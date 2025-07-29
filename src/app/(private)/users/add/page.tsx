@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { Suspense } from "react";
 import UserAddContent from "./_components/user-add-content";
 

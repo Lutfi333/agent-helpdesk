@@ -25,7 +25,11 @@ import ModalFilter from "./modal-filter";
 import PaginationComponent from "@/app/_components/pagination";
 import { useAuthMe } from "@/services/auth";
 
-export default function TicketList() {
+interface Props {
+  userID?: string;
+}
+
+export default function TicketList({ userID }: Props) {
   const router = useRouter();
   const path = usePathname();
   const qs = useSearchParams();
@@ -81,8 +85,9 @@ export default function TicketList() {
       subject: qs.get("subject") || "",
       code: qs.get("id") || "",
       companyProductID: qs.get("companyProductID") || "",
+      completedBy: userID || "",
     };
-  }, [qs]);
+  }, [qs, userID]);
 
   const createQueryString = useCallback(
     (name: string, value: string) => {
@@ -153,7 +158,7 @@ export default function TicketList() {
                 className="flex-none"
                 src={row.customer.}
               /> */}
-              {/* <span className="text-sm font-semibold">{row.product.name}</span> */}
+              <span className="text-sm font-semibold">{row.customer.name}</span>
             </div>
           );
         case "category":
