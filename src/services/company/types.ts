@@ -11,6 +11,7 @@ export interface Data {
   accessKey:    string;
   name:         string;
   bio:          string;
+  contact:      string;
   type:         string;
   productTotal: number;
   ticketTotal:  number;
